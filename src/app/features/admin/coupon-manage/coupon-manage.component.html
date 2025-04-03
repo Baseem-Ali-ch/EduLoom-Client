@@ -1,0 +1,255 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-admin-sidebar class="h-full"></app-admin-sidebar>
+    </div>
+
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container mx-auto">
+            <h1
+                class="flex items-center space-x-3 sm:space-x-4 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default mb-6 sm:mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                    class="bi bi-person sm:w-8 sm:h-8 lg:w-10 lg:h-10" viewBox="0 0 16 16">
+                    <path
+                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                </svg>
+                <span>Coupon Management</span>
+            </h1>
+        </div>
+
+        <div class="container mx-auto">
+            <div class="flex flex-col sm:flex-row justify-end items-center mt-4 gap-3 sm:gap-x-4">
+                <!-- Select Dropdown for Filtering Coupons by Status -->
+                <select [(ngModel)]="selectedStatus" (change)="filterCoupon()"
+                    class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-lg bg-gray-900 text-gray-300 border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+                <!-- Search Input -->
+                <div class="relative flex items-center w-full sm:w-auto mt-3 sm:mt-0">
+                    <span class="absolute left-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </span>
+                    <input type="text" [(ngModel)]="searchTerm" (input)="filterCoupon()" placeholder="Search coupons"
+                        class="w-full sm:w-64 md:w-80 py-1.5 pr-4 sm:pr-5 pl-9 sm:pl-10 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-lg bg-gray-900 placeholder-gray-400/70 focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
+                </div>
+
+                <!-- Add Coupon Button -->
+                <button (click)="toggelForm()"
+                    class="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80 text-xs sm:text-sm mt-3 sm:mt-0">
+                    {{ isVisibleForm ? 'Close' : 'Add Coupon' }}
+                </button>
+            </div>
+
+            <!-- Add Coupon Form -->
+            <ng-container *ngIf="isVisibleForm">
+                <form class="mt-4 sm:mt-6 w-full max-w-3xl mx-auto" (ngSubmit)="onSubmit()" [formGroup]="couponForm">
+                    <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
+                        <div class="w-full md:w-1/2 px-2 sm:px-4">
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Coupon Code</label>
+                                <input formControlName="couponCode" type="text" name="couponCode"
+                                    placeholder="Enter Coupon code"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <p *ngIf="couponForm.get('couponCode')?.hasError('required') && couponForm.get('couponCode')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Discount</label>
+                                <input formControlName="discount" type="number" placeholder="Enter discount percentage"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <p *ngIf="couponForm.get('discount')?.hasError('required') && couponForm.get('discount')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Min Purchase Amount</label>
+                                <input formControlName="minPurAmt" type="number"
+                                    placeholder="Enter minimum purchase amount"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <p *ngIf="couponForm.get('minPurAmt')?.hasError('required') && couponForm.get('minPurAmt')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Status</label>
+                                <select formControlName="status"
+                                    class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm">
+                                    <option value="">Select Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                                <p *ngIf="couponForm.get('status')?.hasError('required') && couponForm.get('status')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/2 px-2 sm:px-4">
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Description</label>
+                                <input formControlName="description" type="text" placeholder="Enter description"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <p *ngIf="couponForm.get('description')?.hasError('required') && couponForm.get('description')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Expiry Date</label>
+                                <input formControlName="expDate" type="date"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <p *ngIf="couponForm.get('expDate')?.hasError('required') && couponForm.get('expDate')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Max Purchase Amount</label>
+                                <input formControlName="maxPurAmt" type="number"
+                                    placeholder="Enter maximum purchase amount"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <p *ngIf="couponForm.get('maxPurAmt')?.hasError('required') && couponForm.get('maxPurAmt')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4 sm:mt-6 flex justify-end gap-3 sm:gap-4 px-2 sm:px-4">
+                        <button type="submit" [disabled]="!couponForm.valid"
+                            class="w-full md:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </ng-container>
+
+            <!-- Coupon Table -->
+            <!-- <div class="flex flex-col mt-4 sm:mt-6">
+                <div class="-mx-4 sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle px-4 sm:px-6 lg:px-8">
+                        <div class="overflow-hidden overflow-x-auto border border-gray-700 rounded-lg">
+                            <app-table [data]="filteredCoupon" [columns]="tableColumns" [currentPage]="currentPage"
+                                [totalPages]="totalPages" [limit]="limit" (pageChange)="onPageChange($event)"
+                                (actionClicked)="onActionClicked($event)">
+                            </app-table>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+
+            <div class="flex flex-col mt-4 sm:mt-6">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="overflow-hidden border border-gray-700 rounded-lg">
+                            <app-table [data]="filteredCoupon" [columns]="tableColumns" [currentPage]="currentPage"
+                                [totalPages]="totalPages" [limit]="limit" (pageChange)="onPageChange($event)"
+                                (actionClicked)="onActionClicked($event)">
+                            </app-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Coupon Modal -->
+        <div *ngIf="showEditModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+            <div class="bg-gray-700 rounded-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-md lg:max-w-lg">
+                <div class="flex justify-between items-center mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-white">Edit Coupon</h3>
+                    <button (click)="closeEditModal()"
+                        class="text-gray-300 hover:text-white text-lg sm:text-xl">×</button>
+                </div>
+                <form [formGroup]="editCouponForm" (ngSubmit)="submitEditCoupon()" class="space-y-3 sm:space-y-4">
+                    <div>
+                        <label for="couponCode" class="block text-xs sm:text-sm font-medium text-gray-300">Coupon
+                            Code</label>
+                        <input id="couponCode" formControlName="couponCode" type="text"
+                            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                        <div *ngIf="editCouponForm.get('couponCode')?.touched && editCouponForm.get('couponCode')?.invalid"
+                            class="text-red-500 text-xs mt-1">
+                            <div *ngIf="editCouponForm.get('couponCode')?.errors?.['required']">Coupon Code is required.
+                            </div>
+                            <div *ngIf="editCouponForm.get('couponCode')?.errors?.['pattern']">Only uppercase letters
+                                and numbers are allowed.</div>
+                            <div *ngIf="editCouponForm.get('couponCode')?.errors?.['minlength']">Coupon code must be at
+                                least 4 characters.</div>
+                            <div *ngIf="editCouponForm.get('couponCode')?.errors?.['maxlength']">Coupon code cannot
+                                exceed 12 characters.</div>
+                            <div *ngIf="editCouponForm.get('couponCode')?.errors?.['whitespace']">Coupon code cannot
+                                contain spaces.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="discount" class="block text-xs sm:text-sm font-medium text-gray-300">Discount
+                            (%)</label>
+                        <input id="discount" formControlName="discount" type="number"
+                            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                        <div *ngIf="editCouponForm.get('discount')?.touched && editCouponForm.get('discount')?.invalid"
+                            class="text-red-500 text-xs mt-1">
+                            <div *ngIf="editCouponForm.get('discount')?.errors?.['required']">Discount is required.
+                            </div>
+                            <div
+                                *ngIf="editCouponForm.get('discount')?.errors?.['min'] || editCouponForm.get('discount')?.errors?.['max']">
+                                Discount must be between 1 and 100.
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="minPurAmt" class="block text-xs sm:text-sm font-medium text-gray-300">Minimum
+                            Purchase Amount</label>
+                        <input id="minPurAmt" formControlName="minPurAmt" type="number"
+                            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                        <div *ngIf="editCouponForm.get('minPurAmt')?.invalid && editCouponForm.get('minPurAmt')?.touched"
+                            class="text-red-500 text-xs mt-1">Minimum Purchase Amount is required.</div>
+                    </div>
+                    <div>
+                        <label for="description"
+                            class="block text-xs sm:text-sm font-medium text-gray-300">Description</label>
+                        <input id="description" formControlName="description" type="text"
+                            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                        <div *ngIf="editCouponForm.get('description')?.invalid && editCouponForm.get('description')?.touched"
+                            class="text-red-500 text-xs mt-1">Description is required.</div>
+                    </div>
+                    <div>
+                        <label for="expDate" class="block text-xs sm:text-sm font-medium text-gray-300">Expiry
+                            Date</label>
+                        <input id="expDate" formControlName="expDate" type="date"
+                            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                        <div *ngIf="editCouponForm.get('expDate')?.invalid && editCouponForm.get('expDate')?.touched"
+                            class="text-red-500 text-xs mt-1">Expiry Date is required.</div>
+                    </div>
+                    <div>
+                        <label for="maxPurAmt" class="block text-xs sm:text-sm font-medium text-gray-300">Maximum
+                            Purchase Amount</label>
+                        <input id="maxPurAmt" formControlName="maxPurAmt" type="number"
+                            class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                        <div *ngIf="editCouponForm.get('maxPurAmt')?.invalid && editCouponForm.get('maxPurAmt')?.touched"
+                            class="text-red-500 text-xs mt-1">Maximum Purchase Amount is required.</div>
+                        <div *ngIf="editCouponForm.errors?.['amountInvalid'] && (editCouponForm.touched || editCouponForm.dirty)"
+                            class="text-red-500 text-xs mt-1">
+                            Maximum Purchase Amount must be greater than Minimum Purchase Amount
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+                        <button type="button" (click)="closeEditModal()"
+                            class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 text-xs sm:text-sm">
+                            Cancel
+                        </button>
+                        <button type="submit" [disabled]="editCouponForm.invalid"
+                            class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-xs sm:text-sm">
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>

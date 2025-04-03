@@ -1,0 +1,131 @@
+<div class="flex flex-col md:flex-row h-screen">
+    <!-- Sidebar -->
+    <app-sidebar></app-sidebar>
+
+    <!-- Home Content -->
+    <section class="flex-1 h-screen overflow-y-auto bg-slate-900">
+        <div class="container px-4 md:px-6 py-6 md:py-10 mx-auto">
+            <h1
+                class="flex space-x-4 text-xl md:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-person"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                </svg>
+                <span>My Profile</span>
+            </h1>
+        </div>
+
+        <!-- personal details -->
+        <div class="flex flex-col lg:flex-row">
+            <div class="container px-4 md:px-6 py-4 md:py-10 mx-auto">
+                <div class="w-full px-4 py-3 rounded-md shadow-md bg-gray-800">
+                    <div *ngIf="user; else loggedOut">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                            <h1 class="text-xl font-semibold text-white">Personal Details</h1>
+                            <button (click)="openEditModal()"
+                                class="text-md text-blue-500 hover:underline">Edit</button>
+                            <button (click)="changePassword()" class="text-md text-blue-500 hover:underline">Change
+                                Password</button>
+                        </div>
+
+                        <p class="mt-2 text-sm text-gray-300">Name</p>
+                        <p class="mt-0 mx-2 text-lg text-gray-300">{{user.userName || 'N/A'}}</p>
+
+                        <p class="mt-2 text-sm text-gray-300">Email</p>
+                        <p class="mt-0 mx-2 text-lg text-gray-300">{{user.email || 'N/A'}}</p>
+
+                        <p class="mt-2 text-sm text-gray-300">Phone</p>
+                        <p class="mt-0 mx-2 text-lg text-gray-300">{{user.phone || 'N/A' }}</p>
+                    </div>
+                    <ng-template #loggedOut>
+                        <p class="mt-2 text-lg text-gray-300">No user data</p>
+                    </ng-template>
+                </div>
+            </div>
+
+            <!-- profile photo -->
+            <div class="container px-4 md:px-6 py-4 md:py-10 mx-auto">
+                <div class="w-full px-4 py-3 rounded-md shadow-md bg-gray-800">
+                    <div *ngIf="user">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-xl font-semibold text-white">Profile Photo</h1>
+                            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*"
+                                class="hidden">
+                            <button (click)="fileInput.click()" class="text-md text-blue-500 hover:underline">
+                                {{ profilePhoto ? 'Change Photo' : 'Add Photo' }}
+                            </button>
+                        </div>
+
+                        <div class="mt-4 mb-6 flex justify-center">
+                            <img [src]="getImageUrl(profilePhoto)"
+                                class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover" alt="Profile photo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Template HTML -->
+        <div class="flex flex-col lg:flex-row">
+            <div class="container px-4 md:px-6 py-4 md:py-10 mx-auto">
+                <div class="w-full px-4 py-3 rounded-md shadow-md bg-gray-800">
+                    <div *ngIf="user; else loggedOut">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                            <h1 class="text-xl font-semibold text-white">Enrolled Courses</h1>
+                        </div>
+
+                        <!-- Loading state -->
+                        <div *ngIf="isLoading" class="mt-4">
+                            <p class="text-gray-300">Loading courses...</p>
+                        </div>
+
+                        <!-- Courses list -->
+                        <div *ngIf="!isLoading" class="mt-4 space-y-4">
+                            <div *ngFor="let course of courses" class=" hover:bg-gray-700 transition-colors"
+                                [class.cursor-pointer]="enrolledCourses[course._id]"
+                                (click)="enrolledCourses[course._id] && navigateToCourse(course._id)">
+                                <ng-container *ngIf="enrolledCourses[course._id]">
+                                    <h3 class="text-lg text-white">{{ course.title }}</h3>
+                                    <p class="text-sm text-gray-400">{{ course.description }}</p>
+                                    <span class="text-sm text-green-500">Enrolled</span>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- become an instructor -->
+        <div class="container px-4 md:px-6 py-4 md:py-10 mx-auto">
+            <div class="w-full px-4 rounded-md shadow-md dark:bg-gray-800">
+                <div class="flex flex-col sm:flex-row justify-between">
+                    <div>
+                        <h1 class="mt-2 text-xl font-semibold text-white">Become an Instructor</h1>
+                        <button (click)="openInstructorReqModal()"
+                            class="mt-4 sm:mt-10 mb-4 sm:mb-8 px-6 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80">
+                            Start Teaching
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        <img src="https://htmldemo.net/edumall/edumall/assets/images/become-a-teacher-hero-image.png"
+                            class="h-24 sm:h-36 mx-auto sm:mx-0" alt="photo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modals -->
+<app-edit-modal [isOpen]="isModalOpen" [userData]="user" (close)="closeModal()"
+    (save)="saveChanges($event)"></app-edit-modal>
+
+<app-instructor-req [isInstructorOpen]="isInstructorModalOpen" [instructorData]="instructor"
+    (instructorClose)="closeInstructorReqModal()" (save)="sendInstructorDetails($event)"></app-instructor-req>
+
+<app-change-password-modal [isPasswordOpen]="isChangePasswordModalOpen" (close)="closeChangePassword()"
+    (save)="savePassword($event)"></app-change-password-modal>

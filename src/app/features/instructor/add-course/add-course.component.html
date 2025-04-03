@@ -1,0 +1,564 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-instructor-sidebar class="h-full"></app-instructor-sidebar>
+    </div>
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container mx-auto">
+            <h1 class="flex items-center space-x-3 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white">
+                <!-- Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-house sm:w-9 sm:h-9 lg:w-10 lg:h-10"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+                </svg>
+                <span>Create Course</span>
+            </h1>
+        </div>
+
+        <!-- Courses Grid -->
+        <div class="container mx-auto mt-4 sm:mt-6">
+            <div class="max-w-full sm:max-w-3xl lg:max-w-4xl mx-auto px-4 py-6 sm:py-8">
+                <!-- Stepper Header -->
+                <div class="mb-6 sm:mb-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-between w-full gap-2 sm:gap-0">
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center text-white">
+                            <div [ngClass]="currentStep >= 1 ? 'bg-blue-500' : 'bg-gray-300'"
+                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+                                1
+                            </div>
+                            <span class="text-xs sm:text-sm mt-1 sm:mt-2">Basic Info</span>
+                        </div>
+                        <div class="flex-1 h-1 mx-2 hidden sm:block" [ngClass]="currentStep > 1 ? 'bg-blue-500' : 'bg-gray-300'"></div>
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center text-white">
+                            <div [ngClass]="currentStep >= 2 ? 'bg-blue-500' : 'bg-gray-300'"
+                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+                                2
+                            </div>
+                            <span class="text-xs sm:text-sm mt-1 sm:mt-2">Content Info</span>
+                        </div>
+                        <div class="flex-1 h-1 mx-2 hidden sm:block" [ngClass]="currentStep > 2 ? 'bg-blue-500' : 'bg-gray-300'"></div>
+                        <!-- Step 3 -->
+                        <div class="flex flex-col items-center text-white">
+                            <div [ngClass]="currentStep >= 3 ? 'bg-blue-500' : 'bg-gray-300'"
+                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+                                3
+                            </div>
+                            <span class="text-xs sm:text-sm mt-1 sm:mt-2">Assessment</span>
+                        </div>
+                        <div class="flex-1 h-1 mx-2 hidden sm:block" [ngClass]="currentStep > 3 ? 'bg-blue-500' : 'bg-gray-300'"></div>
+                        <!-- Step 4 -->
+                        <div class="flex flex-col items-center text-white">
+                            <div [ngClass]="currentStep === 4 ? 'bg-blue-500' : 'bg-gray-300'"
+                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+                                4
+                            </div>
+                            <span class="text-xs sm:text-sm mt-1 sm:mt-2">Pricing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Content -->
+                <form [formGroup]="courseForm" class="shadow-md p-4 sm:p-6">
+                    <!-- Step 1 Content -->
+                    <div *ngIf="currentStep === 1" class="space-y-4 sm:space-y-6">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Course Title</label>
+                            <input type="text" formControlName="title"
+                                class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900 text-gray-300"
+                                placeholder="Enter course title">
+                            <div *ngIf="courseForm.get('title')?.touched && courseForm.get('title')?.invalid"
+                                class="text-red-500 text-xs sm:text-sm mt-1">
+                                Title is required (minimum 5 characters)
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Description</label>
+                            <textarea formControlName="description" rows="3" sm:rows="4"
+                                class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter course description"></textarea>
+                            <div *ngIf="courseForm.get('description')?.touched && courseForm.get('description')?.invalid"
+                                class="text-red-500 text-xs sm:text-sm mt-1">
+                                Description is required (minimum 5 characters)
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Category</label>
+                            <select formControlName="category"
+                                class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select a category</option>
+                                <option value="programming">Programming</option>
+                                <option value="design">Design</option>
+                                <option value="business">Business</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="technology">Technology</option>
+                                <option value="data-science">Data Science</option>
+                                <option value="health-fitness">Health & Fitness</option>
+                                <option value="education">Education</option>
+                                <option value="art-photography">Art & Photography</option>
+                                <option value="music">Music</option>
+                                <option value="languages">Languages</option>
+                                <option value="personal-development">Personal Development</option>
+                                <option value="finance">Finance</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="entrepreneurship">Entrepreneurship</option>
+                            </select>
+                            <div *ngIf="courseForm.get('category')?.touched && courseForm.get('category')?.invalid"
+                                class="text-red-500 text-xs sm:text-sm mt-1">
+                                Category is required
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Difficulty Level</label>
+                            <select formControlName="difficultyLevel"
+                                class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select difficulty level</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                            <div *ngIf="courseForm.get('difficultyLevel')?.touched && courseForm.get('difficultyLevel')?.invalid"
+                                class="text-red-500 text-xs sm:text-sm mt-1">
+                                Difficulty level is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 Content -->
+                    <div *ngIf="currentStep === 2" class="space-y-4 sm:space-y-6" formArrayName="modules">
+                        <div *ngFor="let moduleGroup of modulesArray.controls; let moduleIndex = index"
+                            [formGroupName]="moduleIndex" class="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-300">
+                            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                                <h3 class="text-white text-lg sm:text-xl font-semibold">Module {{moduleIndex + 1}}</h3>
+                                <button type="button" (click)="deleteModule(moduleIndex)"
+                                    class="text-gray-400 hover:text-red-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                        fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                        <path
+                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <input type="text" formControlName="title"
+                                class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4"
+                                placeholder="Module Title">
+                            <div class="space-y-3 sm:space-y-4" formArrayName="lessons">
+                                <div *ngFor="let lessonGroup of getLessonsArray(moduleIndex).controls; let lessonIndex = index"
+                                    [formGroupName]="lessonIndex" class="bg-gray-800 p-3 sm:p-4 rounded-lg">
+                                    <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                        <h4 class="text-white text-sm sm:text-base">Lesson {{lessonIndex + 1}}</h4>
+                                        <button type="button" (click)="deleteLesson(moduleIndex, lessonIndex)"
+                                            class="text-gray-400 hover:text-red-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                                fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                <path
+                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="text" formControlName="title"
+                                        class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4"
+                                        placeholder="Lesson Title">
+                                    <textarea formControlName="content"
+                                        class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4 min-h-[80px] sm:min-h-[100px]"
+                                        placeholder="Lesson Content"></textarea>
+                                    <div *ngIf="lessonGroup.get('document')?.value" class="mb-3 sm:mb-4">
+                                        <h5 class="text-gray-300 text-xs sm:text-sm">Lesson Document:</h5>
+                                        <p class="text-blue-400 text-xs sm:text-sm">
+                                            {{ getDocumentDisplayValue(lessonGroup.get('document')?.value) }}
+                                        </p>
+                                    </div>
+                                    <input type="file" (change)="onFileChange($event, moduleIndex, lessonIndex)"
+                                        class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4">
+                                    <div *ngIf="lessonGroup.get('document')?.value && getDocumentType(lessonGroup.get('document')?.value) === 'video' && isFileObject(lessonGroup.get('document')?.value)"
+                                        class="mb-3 sm:mb-4">
+                                        <h5 class="text-gray-300 text-xs sm:text-sm">Video Preview:</h5>
+                                        <video [src]="getDocumentPreviewUrl(lessonGroup.get('document')?.value)"
+                                            controls class="w-full max-w-xs sm:max-w-md h-auto rounded-md">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                </div>
+                                <button type="button" (click)="addLesson(moduleIndex)"
+                                    class="flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm sm:text-base">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" sm:width="24" sm:height="24"
+                                        fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                    </svg>
+                                    Add Lesson
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" (click)="addModule()"
+                            class="flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 bg-gray-800 text-gray-300 rounded-md hover:bg-gray-700 mt-3 sm:mt-4 text-sm sm:text-base">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" sm:width="24" sm:height="24"
+                                fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                            </svg>
+                            Add Module
+                        </button>
+                    </div>
+
+                    <!-- Step 3 Content -->
+                    <div *ngIf="currentStep === 3" class="space-y-4 sm:space-y-6">
+                        <!-- Assignments Section -->
+                        <div formArrayName="assignments">
+                            <div class="mb-3 sm:mb-4">
+                                <h3 class="text-xs sm:text-sm font-medium text-white">Assignments</h3>
+                                <button type="button" (click)="addAssignment()"
+                                    class="flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-3 sm:mt-4 text-sm sm:text-base">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" sm:width="24" sm:height="24"
+                                        fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                    </svg>
+                                    Add Assignment
+                                </button>
+                            </div>
+                            <div *ngFor="let assignmentGroup of getAssignmentsArray().controls; let assignmentIndex = index"
+                                [formGroupName]="assignmentIndex" class="bg-gray-800 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
+                                <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                    <h4 class="text-white text-sm sm:text-base">Assignment {{assignmentIndex + 1}}</h4>
+                                    <button type="button" (click)="deleteAssignment(assignmentIndex)"
+                                        class="text-gray-400 hover:text-red-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                            fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path
+                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                            <path
+                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <input type="text" formControlName="assignmentTitle"
+                                    class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4"
+                                    placeholder="Assignment Title">
+                                <textarea formControlName="assignmentDescription"
+                                    class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4 min-h-[80px] sm:min-h-[100px]"
+                                    placeholder="Assignment Description"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Quizzes Section -->
+                        <div formArrayName="quizzes">
+                            <div class="mb-3 sm:mb-4">
+                                <h3 class="text-xs sm:text-sm font-medium text-white">Quizzes</h3>
+                                <button type="button" (click)="addQuiz()"
+                                    class="flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-3 sm:mt-4 text-sm sm:text-base">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" sm:width="24" sm:height="24"
+                                        fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                    </svg>
+                                    Add Quiz
+                                </button>
+                            </div>
+                            <div *ngFor="let quizGroup of getQuizzesArray().controls; let quizIndex = index"
+                                [formGroupName]="quizIndex" class="bg-gray-800 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
+                                <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                    <h4 class="text-white text-sm sm:text-base">Quiz {{quizIndex + 1}}</h4>
+                                    <button type="button" (click)="deleteQuiz(quizIndex)"
+                                        class="text-gray-400 hover:text-red-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                            fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path
+                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                            <path
+                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <input type="text" formControlName="title"
+                                    class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4"
+                                    placeholder="Quiz Title">
+                                <div formArrayName="questions" class="space-y-3 sm:space-y-4">
+                                    <div *ngFor="let questionGroup of getQuestionsArray(quizIndex).controls; let questionIndex = index"
+                                        [formGroupName]="questionIndex" class="bg-gray-700 p-3 sm:p-4 rounded-lg">
+                                        <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                            <h5 class="text-white text-xs sm:text-sm">Question {{questionIndex + 1}}</h5>
+                                            <button type="button" (click)="deleteQuestion(quizIndex, questionIndex)"
+                                                class="text-gray-400 hover:text-red-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                                    fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                    <path
+                                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <input type="text" formControlName="questionText"
+                                            class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4"
+                                            placeholder="Question">
+                                        <div formArrayName="options" class="space-y-2 sm:space-y-3">
+                                            <div *ngFor="let optionGroup of getOptionsArray(quizIndex, questionIndex).controls; let optionIndex = index"
+                                                [formGroupName]="optionIndex" class="flex items-center gap-2">
+                                                <input type="checkbox" formControlName="isCorrect"
+                                                    class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-600 rounded focus:ring-blue-500">
+                                                <input type="text" formControlName="optionText"
+                                                    class="flex-1 px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="Option">
+                                                <button type="button"
+                                                    (click)="deleteOption(quizIndex, questionIndex, optionIndex)"
+                                                    class="text-gray-400 hover:text-red-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                                        fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                        <path
+                                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <button type="button" (click)="addOption(quizIndex, questionIndex)"
+                                                class="mt-2 px-2 sm:px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-600 text-xs sm:text-sm">
+                                                Add Option
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" (click)="addQuestion(quizIndex)"
+                                        class="mt-2 px-2 sm:px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-600 text-xs sm:text-sm">
+                                        Add Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Classes Section -->
+                        <div formArrayName="liveClasses">
+                            <div class="mb-3 sm:mb-4">
+                                <h3 class="text-xs sm:text-sm font-medium text-white">Live Classes</h3>
+                                <button type="button" (click)="addLiveClass()"
+                                    class="flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-3 sm:mt-4 text-sm sm:text-base">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" sm:width="24" sm:height="24"
+                                        fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                    </svg>
+                                    Add Live Class
+                                </button>
+                            </div>
+                            <div *ngFor="let liveClassGroup of getLiveClassesArray().controls; let liveClassIndex = index"
+                                [formGroupName]="liveClassIndex" class="bg-gray-800 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
+                                <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                    <h4 class="text-white text-sm sm:text-base">Live Class {{liveClassIndex + 1}}</h4>
+                                    <button type="button" (click)="deleteLiveClass(liveClassIndex)"
+                                        class="text-gray-400 hover:text-red-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" sm:width="16" sm:height="16"
+                                            fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path
+                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                            <path
+                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <input type="text" formControlName="title"
+                                    class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3 sm:mb-4"
+                                    placeholder="Class Title">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+                                    <input type="datetime-local" formControlName="scheduleDate"
+                                        class="px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <input type="number" formControlName="duration"
+                                        class="px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Duration (minutes)">
+                                </div>
+                                <div class="flex items-center mb-3 sm:mb-4">
+                                    <input type="text" formControlName="meetingLink"
+                                        class="flex-1 px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-600 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Meeting Link" readonly>
+                                    <button type="button" (click)="generateMeetLink(liveClassIndex)"
+                                        class="px-3 sm:px-4 py-2 bg-green-500 text-white rounded-r-md hover:bg-green-600 text-sm sm:text-base">
+                                        Generate Meet Link
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 Content -->
+                    <div *ngIf="currentStep === 4" class="space-y-4 sm:space-y-6">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Price</label>
+                            <input type="text" formControlName="price"
+                                class="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900 text-gray-300"
+                                placeholder="Enter Price">
+                            <div *ngIf="courseForm.get('price')?.touched && courseForm.get('price')?.invalid"
+                                class="text-red-500 text-xs sm:text-sm mt-1">
+                                Price is required and must be a valid number
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Available Offers</label>
+                            <select formControlName="offer"
+                                class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select offer</option>
+                                <option *ngFor="let offer of offers" [value]="offer._id">{{offer.title}}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-white mb-1 sm:mb-2">Available Coupon</label>
+                            <select formControlName="coupon"
+                                class="w-full px-3 py-2 text-sm sm:text-base bg-gray-900 text-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select coupon</option>
+                            </select>
+                        </div>
+                        <!-- Preview Section -->
+                        <div>
+                            <h2 class="text-lg sm:text-xl lg:text-2xl font-semibold mb-4 sm:mb-6 text-white mt-4 sm:mt-6">Preview</h2>
+                            <div class="bg-gray-800 p-4 sm:p-6 rounded-lg text-white shadow-md space-y-4 sm:space-y-6">
+                                <div>
+                                    <h3 class="text-base sm:text-lg lg:text-xl font-semibold text-gray-100 mb-3 sm:mb-4 border-b border-gray-700 pb-2">
+                                        Course Details</h3>
+                                    <div class="space-y-2 sm:space-y-3 text-gray-300 text-xs sm:text-sm">
+                                        <p><span class="font-medium text-gray-100">Title:</span> {{ coursePreview.title || 'Not provided' }}</p>
+                                        <p><span class="font-medium text-gray-100">Description:</span> {{ coursePreview.description || 'Not provided' }}</p>
+                                        <p><span class="font-medium text-gray-100">Category:</span> {{ coursePreview.category || 'Not provided' }}</p>
+                                        <p><span class="font-medium text-gray-100">Difficulty Level:</span> {{ coursePreview.difficultyLevel || 'Not provided' }}</p>
+                                        <p><span class="font-medium text-gray-100">Price:</span> ₹{{ coursePreview.price || 'Not provided' }}</p>
+                                        <p><span class="font-medium text-gray-100">Offer ID:</span> {{ coursePreview.offer || 'Not provided' }}</p>
+                                        <p><span class="font-medium text-gray-100">Coupon ID:</span> {{ coursePreview.coupon || 'Not provided' }}</p>
+                                    </div>
+                                </div>
+                                <div *ngIf="coursePreview.modules?.length > 0">
+                                    <h3 class="text-base sm:text-lg lg:text-xl font-semibold text-gray-100 mb-3 sm:mb-4 border-b border-gray-700 pb-2">
+                                        Modules</h3>
+                                    <div class="space-y-4 sm:space-y-6">
+                                        <div *ngFor="let module of coursePreview.modules; let i = index"
+                                            class="bg-gray-900 p-3 sm:p-4 rounded-md">
+                                            <h4 class="text-sm sm:text-lg font-semibold text-gray-100 mb-2 sm:mb-3">Module {{ i + 1 }}: {{ module.title || 'Untitled' }}</h4>
+                                            <ul class="list-disc pl-4 sm:pl-6 space-y-3 sm:space-y-4 text-gray-300 text-xs sm:text-sm">
+                                                <li *ngFor="let lesson of module.lessons; let j = index">
+                                                    <div class="space-y-1">
+                                                        <p><span class="font-medium text-gray-100">Lesson {{ j + 1 }}:</span> {{ lesson.title || 'Untitled' }}</p>
+                                                        <p class="text-gray-400">{{ lesson.content || 'No content provided' }}</p>
+                                                        <p class="text-gray-400">{{ lesson.document || 'No document provided' }}</p>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p *ngIf="!coursePreview.modules?.length" class="text-gray-400 italic text-xs sm:text-sm">No modules added yet.</p>
+                                <div *ngIf="coursePreview.assignments?.length > 0">
+                                    <h3 class="text-base sm:text-lg lg:text-xl font-semibold text-gray-100 mb-3 sm:mb-4 border-b border-gray-700 pb-2">
+                                        Assignments</h3>
+                                    <div class="space-y-4 sm:space-y-6">
+                                        <div *ngFor="let assignment of coursePreview.assignments; let i = index"
+                                            class="bg-gray-900 p-3 sm:p-4 rounded-md">
+                                            <h4 class="text-sm sm:text-lg font-semibold text-gray-100 mb-2">Assignment {{ i + 1 }}: {{ assignment.assignmentTitle || 'Untitled' }}</h4>
+                                            <p class="text-gray-300 leading-relaxed text-xs sm:text-sm">{{ assignment.assignmentDescription || 'No description provided' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p *ngIf="!coursePreview.assignments?.length" class="text-gray-400 italic text-xs sm:text-sm">No assignments added yet.</p>
+                                <div *ngIf="coursePreview.quizzes?.length > 0">
+                                    <h3 class="text-base sm:text-lg lg:text-xl font-semibold text-gray-100 mb-3 sm:mb-4 border-b border-gray-700 pb-2">
+                                        Quizzes</h3>
+                                    <div class="space-y-4 sm:space-y-6">
+                                        <div *ngFor="let quiz of coursePreview.quizzes; let i = index"
+                                            class="bg-gray-900 p-3 sm:p-4 rounded-md">
+                                            <h4 class="text-sm sm:text-lg font-semibold text-gray-100 mb-2 sm:mb-3">Quiz {{ i + 1 }}: {{ quiz.title || 'Untitled' }}</h4>
+                                            <ul class="list-disc pl-4 sm:pl-6 space-y-3 sm:space-y-4 text-gray-300 text-xs sm:text-sm">
+                                                <li *ngFor="let question of quiz.questions; let j = index">
+                                                    <p class="font-medium text-gray-100">Question {{ j + 1 }}:</p>
+                                                    <p class="mb-1 sm:mb-2">{{ question.questionText || 'No question text' }}</p>
+                                                    <ul class="list-circle pl-4 sm:pl-6 space-y-1">
+                                                        <li *ngFor="let option of question.options; let k = index"
+                                                            class="flex items-center">
+                                                            <span>{{ option.optionText || 'No text' }}</span>
+                                                            <span *ngIf="option.isCorrect"
+                                                                class="ml-2 text-green-400 text-xs font-medium">(Correct)</span>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p *ngIf="!coursePreview.quizzes?.length" class="text-gray-400 italic text-xs sm:text-sm">No quizzes added yet.</p>
+                                <div *ngIf="coursePreview.liveClasses?.length > 0">
+                                    <h3 class="text-base sm:text-lg lg:text-xl font-semibold text-gray-100 mb-3 sm:mb-4 border-b border-gray-700 pb-2">
+                                        Live Classes</h3>
+                                    <div class="space-y-4 sm:space-y-6">
+                                        <div *ngFor="let liveClass of coursePreview.liveClasses; let i = index"
+                                            class="bg-gray-900 p-3 sm:p-4 rounded-md">
+                                            <h4 class="text-sm sm:text-lg font-semibold text-gray-100 mb-2">Live Class {{ i + 1 }}: {{ liveClass.title || 'Untitled' }}</h4>
+                                            <div class="space-y-2 text-gray-300 text-xs sm:text-sm">
+                                                <p><span class="font-medium text-gray-100">Schedule:</span> {{ liveClass.scheduleDate | date:'medium' || 'Not set' }}</p>
+                                                <p><span class="font-medium text-gray-100">Duration:</span> {{ liveClass.duration || 'Not set' }} minutes</p>
+                                                <p><span class="font-medium text-gray-100">Meeting Link:</span>
+                                                    <a [href]="liveClass.meetingLink" target="_blank"
+                                                        class="text-blue-400 hover:underline">
+                                                        {{ liveClass.meetingLink || 'Not provided' }}
+                                                    </a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p *ngIf="!coursePreview.liveClasses?.length" class="text-gray-400 italic text-xs sm:text-sm">No live classes added yet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-between mt-6 sm:mt-8 gap-3 sm:gap-4">
+                        <button *ngIf="currentStep === 1" type="button" disabled
+                            class="px-4 sm:px-6 py-2 bg-gray-200 text-gray-700 rounded-md cursor-not-allowed text-sm sm:text-base">
+                            Previous
+                        </button>
+                        <button *ngIf="currentStep > 1" (click)="previousStep()" type="button"
+                            class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm sm:text-base">
+                            Previous
+                        </button>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                            <button *ngIf="currentStep < totalSteps" (click)="nextStep()" type="button"
+                                class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base">
+                                Next
+                            </button>
+                            <button *ngIf="currentStep === totalSteps" (click)="saveDraft()" type="button"
+                                class="px-4 sm:px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center justify-center text-sm sm:text-base">
+                                <span *ngIf="!isLoading">Save as Draft</span>
+                                <span *ngIf="isLoading" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    Saving...
+                                </span>
+                            </button>
+                            <button *ngIf="currentStep === totalSteps" (click)="publish()" type="button"
+                                class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center text-sm sm:text-base">
+                                <span *ngIf="!isLoading">{{ isEditMode ? 'Update and Publish' : 'Publish' }}</span>
+                                <span *ngIf="isLoading" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    Publishing...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>

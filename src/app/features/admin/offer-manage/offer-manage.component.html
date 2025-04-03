@@ -1,0 +1,237 @@
+<div class="flex flex-col min-h-screen md:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-admin-sidebar class="w-full md:w-64 flex-shrink-0"></app-admin-sidebar>
+    </div>
+
+    <!-- Main Content -->
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container mx-auto">
+            <h1
+                class="flex items-center space-x-3 sm:space-x-4 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default mb-6 sm:mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                    class="bi bi-person sm:w-8 sm:h-8 lg:w-10 lg:h-10" viewBox="0 0 16 16">
+                    <path
+                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                </svg>
+                <span>Offer Management</span>
+            </h1>
+
+            <!-- Filter and Search Options -->
+            <div
+                class="flex flex-col sm:flex-row justify-start sm:justify-end items-start sm:items-center gap-3 sm:gap-x-4 mt-2 sm:mt-4">
+                <!-- Select Dropdown for Filtering Offers by Status -->
+                <select [(ngModel)]="selectedStatus" (change)="filterOffer()"
+                    class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-lg bg-gray-900 text-gray-300 border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+                <!-- Search Input -->
+                <div class="relative flex items-center w-full sm:w-auto">
+                    <span class="absolute left-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </span>
+                    <input type="text" [(ngModel)]="searchTerm" (input)="filterOffer()" placeholder="Search offers"
+                        class="block w-full sm:w-64 md:w-80 py-1.5 sm:py-2 pr-4 sm:pr-5 pl-9 sm:pl-10 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-lg bg-gray-900 placeholder-gray-400/70 focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
+                </div>
+
+                <!-- Add Offer Button -->
+                <button (click)="toggelForm()"
+                    class="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80">
+                    {{ isVisibleForm ? 'Close' : 'Add Offer' }}
+                </button>
+            </div>
+
+            <!-- Add Offer Form -->
+            <ng-container *ngIf="isVisibleForm">
+                <form class="mt-4 sm:mt-6 w-full max-w-3xl mx-auto" (ngSubmit)="onSubmit()" [formGroup]="offerForm">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="w-full md:w-1/2 px-2 sm:px-4">
+                            <!-- Name -->
+                            <div class="mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Name</label>
+                                <input formControlName="title" type="text" name="title" placeholder="Enter offer name"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <div *ngIf="offerForm.get('title')?.touched && offerForm.get('title')?.invalid"
+                                    class="text-red-500 text-xs mt-1">
+                                    <div *ngIf="offerForm.get('title')?.errors?.['required']">Title is required.</div>
+                                    <div *ngIf="offerForm.get('title')?.errors?.['minlength']">Title must be at least 3
+                                        characters long.</div>
+                                    <div *ngIf="offerForm.get('title')?.errors?.['maxlength']">Title cannot exceed 50
+                                        characters.</div>
+                                    <div *ngIf="offerForm.get('title')?.errors?.['pattern']">Title can only contain
+                                        letters, numbers, and spaces.</div>
+                                    <div *ngIf="offerForm.get('title')?.errors?.['whitespaceOnly']">Title cannot contain
+                                        only spaces.</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Discount</label>
+                                <input formControlName="discount" type="number" placeholder="Discount of offer"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                <div *ngIf="offerForm.get('discount')?.touched && offerForm.get('discount')?.invalid"
+                                    class="text-red-500 text-xs mt-1">
+                                    <div *ngIf="offerForm.get('discount')?.errors?.['required']">Discount is required.
+                                    </div>
+                                    <div
+                                        *ngIf="offerForm.get('discount')?.errors?.['min'] || offerForm.get('discount')?.errors?.['max']">
+                                        Discount must be between 1 and 100.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/2 px-2 sm:px-4">
+                            <div class="mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Category</label>
+                                <select formControlName="category"
+                                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 text-xs sm:text-sm">
+                                    <option value="">Select Category</option>
+                                    <option value="programming">Programming</option>
+                                    <option value="design">Design</option>
+                                    <option value="business">Business</option>
+                                    <option value="marketing">Marketing</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="data-science">Data Science</option>
+                                    <option value="health-fitness">Health & Fitness</option>
+                                    <option value="education">Education</option>
+                                    <option value="art-photography">Art & Photography</option>
+                                    <option value="music">Music</option>
+                                    <option value="languages">Languages</option>
+                                    <option value="personal-development">Personal Development</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="engineering">Engineering</option>
+                                    <option value="entrepreneurship">Entrepreneurship</option>
+                                </select>
+                                <p *ngIf="offerForm.get('category')?.hasError('required') && offerForm.get('category')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Status</label>
+                                <select formControlName="status"
+                                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 text-xs sm:text-sm">
+                                    <option value="">Select Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                                <p *ngIf="offerForm.get('status')?.hasError('required') && offerForm.get('status')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4 sm:mt-6 flex justify-end gap-3 sm:gap-4 px-2 sm:px-4">
+                        <button type="submit" [disabled]="!offerForm.valid"
+                            class="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </ng-container>
+
+            <!-- Table Container with Isolated Horizontal Scroll -->
+            <div class="flex flex-col mt-4 sm:mt-6">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="overflow-hidden border border-gray-700 rounded-lg">
+                            <app-table [data]="filteredOffers" [columns]="tableColumns" [currentPage]="currentPage"
+                                [totalPages]="totalPages" [limit]="limit" (pageChange)="onPageChange($event)"
+                                (actionClicked)="onActionClicked($event)">
+                            </app-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Offer Modal -->
+        <div *ngIf="showEditModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+            <div class="bg-gray-700 rounded-lg p-4 sm:p-6 w-full max-w-md">
+                <div class="flex justify-between items-center mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-white">Edit Offer</h3>
+                    <button (click)="closeEditModal()"
+                        class="text-gray-300 hover:text-white text-xl sm:text-2xl">×</button>
+                </div>
+                <form [formGroup]="editOfferForm" (ngSubmit)="submitEditOffer()">
+                    <div class="mb-3 sm:mb-4">
+                        <label for="title" class="block text-xs sm:text-sm font-medium text-gray-300">Title</label>
+                        <input id="title" formControlName="title" type="text"
+                            class="w-full px-3 sm:px-4 py-2 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 text-xs sm:text-sm" />
+                        <div *ngIf="editOfferForm.get('title')?.touched && editOfferForm.get('title')?.invalid"
+                            class="text-red-500 text-xs mt-1">
+                            <div *ngIf="editOfferForm.get('title')?.errors?.['required']">Title is required.</div>
+                            <div *ngIf="editOfferForm.get('title')?.errors?.['minlength']">Title must be at least 3
+                                characters long.</div>
+                            <div *ngIf="editOfferForm.get('title')?.errors?.['maxlength']">Title cannot exceed 50
+                                characters.</div>
+                            <div *ngIf="editOfferForm.get('title')?.errors?.['pattern']">Title can only contain letters,
+                                numbers, and spaces.</div>
+                            <div *ngIf="editOfferForm.get('title')?.errors?.['whitespaceOnly']">Title cannot contain
+                                only spaces.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3 sm:mb-4">
+                        <label for="discount" class="block text-xs sm:text-sm font-medium text-gray-300">Discount
+                            (%)</label>
+                        <input id="discount" formControlName="discount" type="number"
+                            class="w-full px-3 sm:px-4 py-2 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 text-xs sm:text-sm" />
+                        <div *ngIf="editOfferForm.get('discount')?.touched && editOfferForm.get('discount')?.invalid"
+                            class="text-red-500 text-xs mt-1">
+                            <div *ngIf="editOfferForm.get('discount')?.errors?.['required']">Discount is required.</div>
+                            <div
+                                *ngIf="editOfferForm.get('discount')?.errors?.['min'] || editOfferForm.get('discount')?.errors?.['max']">
+                                Discount must be between 1 and 100.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 sm:mb-4">
+                        <label for="category"
+                            class="block text-xs sm:text-sm font-medium text-gray-300">Category</label>
+                        <select id="category" formControlName="category"
+                            class="w-full px-3 sm:px-4 py-2 bg-gray-900 text-gray-300 border border-gray-600 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 text-xs sm:text-sm">
+                            <option value="">Select Category</option>
+                            <option value="programming">Programming</option>
+                            <option value="design">Design</option>
+                            <option value="business">Business</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="technology">Technology</option>
+                            <option value="data-science">Data Science</option>
+                            <option value="health-fitness">Health & Fitness</option>
+                            <option value="education">Education</option>
+                            <option value="art-photography">Art & Photography</option>
+                            <option value="music">Music</option>
+                            <option value="languages">Languages</option>
+                            <option value="personal-development">Personal Development</option>
+                            <option value="finance">Finance</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="entrepreneurship">Entrepreneurship</option>
+                        </select>
+                        <div *ngIf="editOfferForm.get('category')?.invalid && editOfferForm.get('category')?.touched"
+                            class="text-red-500 text-xs mt-1">Category is required.</div>
+                    </div>
+
+                    <div class="flex justify-end space-x-2 sm:space-x-3">
+                        <button type="button" (click)="closeEditModal()"
+                            class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 text-xs sm:text-sm">
+                            Cancel
+                        </button>
+                        <button type="submit" [disabled]="editOfferForm.invalid"
+                            class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-xs sm:text-sm">
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>

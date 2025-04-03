@@ -1,0 +1,94 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-instructor-sidebar class="h-full"></app-instructor-sidebar>
+    </div>
+    <!-- Home Content -->
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <!-- Banner -->
+        <div class="container px-4 sm:px-6 py-6 sm:py-10 mx-auto">
+            <h1
+                class="flex items-center space-x-3 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                    class="bi bi-house sm:w-9 sm:h-9 lg:w-10 lg:h-10" viewBox="0 0 16 16">
+                    <path
+                        d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+                </svg>
+                <span>My Students</span>
+            </h1>
+        </div>
+
+        <section class="bg-gray-900">
+            <div class="container px-4 sm:px-6 py-6 sm:py-10 mx-auto">
+                <div class="grid grid-cols-1 gap-6 sm:gap-8 mt-6 sm:mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4">
+                    <div *ngFor="let student of enrolledStudents"
+                        class="flex flex-col items-center p-6 sm:p-8 transition-colors duration-300 transform cursor-pointer group hover:bg-gray-800 rounded-xl">
+                        <img class="object-cover w-24 h-24 sm:w-32 sm:h-32 rounded-full ring-4 ring-gray-300"
+                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q="
+                            alt="{{ student.userName }}">
+
+                        <h1
+                            class="mt-3 sm:mt-4 text-lg sm:text-2xl font-semibold  capitalize text-white group-hover:text-white">
+                            {{ student.userName }}
+                        </h1>
+
+                        <p
+                            class="mt-1 sm:mt-2 text-sm sm:text-base  capitalize text-gray-300 group-hover:text-gray-300">
+                            {{ student.email }}
+                        </p>
+
+                        <div class="flex mt-2 sm:mt-3 -mx-2">
+                            <a (click)="openChat(student._id!)" href="javascript:void(0)"
+                                class="mx-2 text-gray-300 hover:text-gray-500 dark:hover:text-gray-300 group-hover:text-white"
+                                aria-label="Chat">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3096 17.8992 16.9674 18.7293C15.6252 19.5594 14.0782 19.9991 12.5 20C11.1801 20.0034 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00087 9.92179 4.44051 8.3748 5.27072 7.03258C6.10093 5.69037 7.28825 4.6056 8.7 3.9C9.87812 3.30493 11.1801 2.99656 12.5 3H12.51C14.0882 3.00087 15.6352 3.44051 16.9774 4.27072C18.3196 5.10093 19.4044 6.28825 20.1101 7.7C20.6951 8.87812 21.0034 10.1801 21 11.5Z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Modal -->
+                <div *ngIf="showChatModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+                    <div
+                        class="bg-gray-700 rounded-lg p-3 sm:p-4 w-full max-w-xs sm:max-w-md lg:max-w-lg flex flex-col h-[400px] sm:h-[500px]">
+                        <div class="flex justify-between items-center mb-2 sm:mb-3">
+                            <h3 class="text-base sm:text-lg font-semibold text-white">Chat with {{ selectedStudentName
+                                }}</h3>
+                            <button (click)="closeChat()"
+                                class="text-gray-300 hover:text-white text-lg sm:text-xl">×</button>
+                        </div>
+                        <div id="instructor-chat-container" class="flex-1 overflow-y-auto p-2 bg-gray-800 rounded-md">
+                            <div *ngFor="let msg of chatMessages" class="mb-2 flex"
+                                [ngClass]="{'justify-end': msg.isInstructor, 'justify-start': !msg.isInstructor}">
+                                <div class="max-w-[80%] sm:max-w-xs p-2 rounded-lg"
+                                    [ngClass]="{'bg-blue-600 text-white': msg.isInstructor, 'bg-gray-600 text-white': !msg.isInstructor}">
+                                    <p class="text-xs sm:text-sm">
+                                        <span class="font-semibold">{{ msg.sender === instructorId ? 'You' :
+                                            selectedStudentName }}</span>
+                                        <span class="ml-2 text-gray-300">{{ msg.timestamp | date:'short' }}</span>
+                                    </p>
+                                    <p class="text-xs sm:text-sm">{{ msg.message }}</p>
+                                </div>
+                            </div>
+                            <p *ngIf="!chatMessages.length" class="text-gray-400 text-xs sm:text-sm">No messages yet.
+                                Start chatting!</p>
+                        </div>
+                        <form [formGroup]="chatForm" (ngSubmit)="sendMessage()" class="mt-2 sm:mt-3 flex">
+                            <input formControlName="message" type="text" placeholder="Type your message..."
+                                class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-900 text-gray-300 border border-gray-600 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm" />
+                            <button type="submit" [disabled]="chatForm.invalid"
+                                class="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 text-xs sm:text-sm">
+                                Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</div>

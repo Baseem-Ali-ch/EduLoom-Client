@@ -1,0 +1,119 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-admin-sidebar class="h-full"></app-admin-sidebar>
+    </div>
+    <!-- Main Content -->
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container mx-auto">
+            <h1
+                class="flex items-center space-x-3 sm:space-x-4 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default mb-6 sm:mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                    class="bi bi-bell sm:w-8 sm:h-8 lg:w-10 lg:h-10" viewBox="0 0 16 16">
+                    <path
+                        d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
+                </svg>
+                <span>Announcements</span>
+            </h1>
+        </div>
+
+        <div class="container mx-auto p-4 sm:p-6">
+            <div class="flex justify-end items-center mt-4 gap-3 sm:gap-x-4">
+                <button (click)="toggelForm()"
+                    class="w-full sm:w-auto px-4 sm:px-6 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80 text-xs sm:text-sm">
+                    {{ isVisibleForm ? 'Close' : 'Add Announcement' }}
+                </button>
+            </div>
+
+            <!-- Add/Edit Announcement Form -->
+            <ng-container *ngIf="isVisibleForm">
+                <form class="mt-4 sm:mt-6 w-full max-w-3xl mx-auto" [formGroup]="announcementForm"
+                    (ngSubmit)="onSubmit()">
+                    <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
+                        <div class="w-full md:w-1/2 px-2 sm:px-4">
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Title</label>
+                                <input formControlName="title" type="text" name="title" placeholder="Enter title"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40" />
+                                <p *ngIf="announcementForm.get('title')?.hasError('required') && announcementForm.get('title')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-1/2 px-2 sm:px-4">
+                            <div class="mt-2 sm:mt-3">
+                                <label class="text-xs sm:text-sm text-gray-200">Description</label>
+                                <!-- <textarea formControlName="description" placeholder="Enter description" rows="4" sm:rows-5"
+                                    class="block w-full px-3 sm:px-4 py-2 sm:py-3 mt-1 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-md bg-gray-900 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"></textarea> -->
+                                <textarea formControlName="description" placeholder="Enter description" rows="5"
+                                    class="block w-full px-4 py-3 mt-1 text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 border-gray-600 bg-gray-900 text-gray-300"></textarea>
+                                <p *ngIf="announcementForm.get('description')?.hasError('required') && announcementForm.get('description')?.touched"
+                                    class="mt-1 text-red-500 text-xs">This field is required</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 px-2 sm:px-4">
+                        <button type="submit" [disabled]="!announcementForm.valid"
+                            class="w-full sm:w-auto px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 disabled:opacity-50 disabled:cursor-not-allowed">
+                            {{ editMode ? 'Update' : 'Submit' }}
+                        </button>
+                        <button type="button" (click)="toggelForm()"
+                            class="w-full sm:w-auto px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-40 mt-2 sm:mt-0">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </ng-container>
+
+            <!-- Announcements List -->
+            <div class="grid gap-4 sm:gap-6 mt-6 sm:mt-8">
+                <div *ngFor="let announcement of announcements" class="p-4 sm:p-5 bg-gray-800 rounded-lg shadow">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+                        <h2 class="text-base sm:text-lg font-semibold text-white">{{ announcement.title }}</h2>
+                        <!-- Uncomment and adjust if edit/delete functionality is needed -->
+                        <!-- <div class="flex space-x-3 sm:space-x-4">
+                            <button (click)="editAnnouncement(announcement)"
+                                class="transition-colors duration-200 hover:text-yellow-500 text-gray-300 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                            </button>
+                            <button (click)="deleteAnnouncement(announcement._id)"
+                                class="transition-colors duration-200 hover:text-red-500 text-gray-300 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div> -->
+                    </div>
+                    <p class="text-gray-300 mt-2 text-xs sm:text-sm">{{ announcement.description }}</p>
+                    <p class="text-gray-400 mt-2 text-xs sm:text-sm">Created: {{ announcement.createdAt | date }}</p>
+                    <p class="text-gray-400 mt-1 text-xs sm:text-sm">Last Updated: {{ announcement.updatedAt | date }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div *ngFor="let notification of notifications" class="space-y-4 mt-6 sm:mt-8">
+                <div class="p-4 sm:p-5 bg-gray-800 rounded-lg shadow cursor-pointer" (click)="openModal(notification)">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+                        <h2 class="text-base sm:text-lg font-semibold text-white">{{ notification.title }}</h2>
+                        <span [ngClass]="{
+                            'bg-yellow-100 text-yellow-900': notification.status === 'pending',
+                            'bg-green-100 text-green-900': notification.status === 'accepted',
+                            'bg-red-100 text-red-900': notification.status === 'rejected'
+                        }" class="px-2 sm:px-3 py-1 text-xs sm:text-sm font-semibold rounded-lg">
+                            {{ notification.status }}
+                        </span>
+                    </div>
+                    <p class="text-gray-300 mt-2 text-xs sm:text-sm">{{ notification.message }}</p>
+                    <span class="text-xs sm:text-sm text-gray-400 block mt-2">Date: {{ notification.createdAt |
+                        date:'yyyy-MM-dd' }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Notification Modal -->
+<app-notification-modal [isOpen]="isModalOpen" [data]="notificationData"
+    (close)="closeModal()"></app-notification-modal>

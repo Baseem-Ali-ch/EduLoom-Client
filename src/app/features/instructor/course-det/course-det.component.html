@@ -1,0 +1,154 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-instructor-sidebar class="h-full"></app-instructor-sidebar>
+    </div>
+    <!-- Main Content -->
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container mx-auto" *ngIf="course; else loading">
+            <!-- Course Header -->
+            <div class="bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
+                    <!-- Video Player -->
+                    <div class="md:w-2/3">
+                        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4">{{ course.title }}</h1>
+                        <h2 class="text-lg sm:text-xl font-semibold text-white mb-2" *ngIf="selectedLesson?.title">
+                            {{ selectedLesson.title }}
+                        </h2>
+                        <div class="aspect-w-16 aspect-h-9">
+                            <video controls class="w-full rounded-lg" *ngIf="selectedLesson?.document">
+                                <source [src]="selectedLesson.document" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div *ngIf="!selectedLesson" class="bg-gray-700 h-48 sm:h-64 flex items-center justify-center text-gray-400 rounded-lg text-sm sm:text-base">
+                                Select a lesson
+                            </div>
+                            <div *ngIf="selectedLesson && !selectedLesson.document" class="bg-gray-700 h-48 sm:h-64 flex items-center justify-center text-gray-400 rounded-lg text-sm sm:text-base">
+                                Loading video...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info -->
+                    <div class="mt-6 sm:mt-8 md:mt-0 md:w-1/3">
+                        <div class="space-y-3 sm:space-y-4">
+                            <p class="text-gray-300 text-sm sm:text-base">{{ course.description }}</p>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-medium text-white text-sm sm:text-base">Difficulty:</span>
+                                <span [ngClass]="{
+                                    'bg-green-100 text-green-700': course.difficultyLevel === 'beginner',
+                                    'bg-yellow-100 text-yellow-700': course.difficultyLevel === 'intermediate',
+                                    'bg-red-100 text-red-700': course.difficultyLevel === 'advanced'
+                                }" class="px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-full capitalize">
+                                    {{ course.difficultyLevel }}
+                                </span>
+                            </div>
+                            <p class="text-white text-sm sm:text-base"><span class="font-medium">Price:</span> ₹{{ course.price.toFixed(2) }}</p>
+                            <p class="text-white text-sm sm:text-base"><span class="font-medium">Instructor:</span> {{ course.instructorId?.userName || 'Unknown' }}</p>
+                            <p class="text-white text-sm sm:text-base"><span class="font-medium">Offer:</span> {{ course.offer?.title || 'No' }}</p>
+                            <!-- Uncomment if needed -->
+                            <!-- <button
+                                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm sm:text-base">
+                                Enroll Now
+                            </button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Content Tabs -->
+            <div class="bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
+                <div class="flex flex-col sm:flex-row border-b border-gray-700 mb-3 sm:mb-4 gap-2 sm:gap-0">
+                    <button *ngFor="let tab of tabs" (click)="activeTab = tab"
+                        [ngClass]="{'border-b-2 border-blue-500 text-blue-400': activeTab === tab, 'text-gray-400': activeTab !== tab}"
+                        class="px-3 sm:px-4 py-1 sm:py-2 font-medium focus:outline-none text-sm sm:text-base">
+                        {{ tab }}
+                    </button>
+                </div>
+
+                <!-- Modules -->
+                <div *ngIf="activeTab === 'Modules'" class="space-y-3 sm:space-y-4">
+                    <div *ngFor="let module of course.modules; let i = index"
+                        class="bg-gray-700 rounded-lg overflow-hidden">
+                        <!-- Module Header (Clickable to toggle) -->
+                        <div class="p-3 sm:p-4 cursor-pointer flex justify-between items-center hover:bg-gray-600 transition duration-200"
+                            (click)="toggleModule(i)">
+                            <h3 class="text-base sm:text-lg font-semibold text-white">{{ i + 1 }}. {{ module.title }}</h3>
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-300 transform transition-transform duration-200"
+                                [ngClass]="{'rotate-180': expandedModules[i]}" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+
+                        <!-- Lessons (Collapsible content) -->
+                        <div *ngIf="expandedModules[i]"
+                            class="px-3 sm:px-4 pb-3 sm:pb-4 space-y-2 bg-gray-700 transition-all duration-200 ease-in-out">
+                            <ul class="space-y-2">
+                                <li *ngFor="let lesson of module.lessons" (click)="selectLesson(lesson)"
+                                    class="p-2 sm:p-3 bg-gray-800 rounded-lg hover:bg-gray-600 cursor-pointer text-gray-300 transition duration-200"
+                                    [ngClass]="{'bg-gray-600': selectedLesson === lesson}">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium text-sm sm:text-base">{{ lesson.title }}</span>
+                                        <p class="mt-1 text-xs sm:text-sm text-gray-400">{{ lesson.content }}</p>
+                                        <a *ngIf="lesson.document" target="_blank" class="mt-1 text-blue-500 hover:underline text-xs sm:text-sm">
+                                            View Lesson Video
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignments -->
+                <div *ngIf="activeTab === 'Assignments'" class="space-y-3 sm:space-y-4">
+                    <div *ngFor="let assignment of course.assignments" class="bg-gray-700 rounded-lg p-3 sm:p-4">
+                        <h3 class="text-base sm:text-lg font-semibold text-white">{{ assignment.assignmentTitle }}</h3>
+                        <p class="text-gray-300 mt-1 sm:mt-2 text-sm sm:text-base">{{ assignment.assignmentDescription }}</p>
+                        <button class="mt-2 bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded hover:bg-blue-600 text-xs sm:text-sm">
+                            Submit Assignment
+                        </button>
+                    </div>
+                    <p *ngIf="!course.assignments?.length" class="text-gray-400 text-sm sm:text-base">No assignments available yet.</p>
+                </div>
+
+                <!-- Quizzes -->
+                <div *ngIf="activeTab === 'Quizzes'" class="space-y-3 sm:space-y-4">
+                    <div *ngFor="let quiz of course.quizzes" class="bg-gray-700 rounded-lg p-3 sm:p-4">
+                        <h3 class="text-base sm:text-lg font-semibold text-white">{{ quiz.title }}</h3>
+                        <ul class="mt-1 sm:mt-2 ml-3 sm:ml-4 list-disc text-gray-300 text-sm sm:text-base">
+                            <li *ngFor="let question of quiz.questions">{{ question.questionText }}</li>
+                        </ul>
+                        <button class="mt-2 bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded hover:bg-blue-600 text-xs sm:text-sm">
+                            Take Quiz
+                        </button>
+                    </div>
+                    <p *ngIf="!course.quizzes?.length" class="text-gray-400 text-sm sm:text-base">No quizzes available yet.</p>
+                </div>
+
+                <!-- Live Classes -->
+                <div *ngIf="activeTab === 'Live Classes'" class="space-y-3 sm:space-y-4">
+                    <div *ngFor="let liveClass of course.liveClasses" class="bg-gray-700 rounded-lg p-3 sm:p-4">
+                        <h3 class="text-base sm:text-lg font-semibold text-white">{{ liveClass.title }}</h3>
+                        <p class="text-gray-300 text-sm sm:text-base">Date: {{ liveClass.scheduleDate | date:'medium' }}</p>
+                        <p class="text-gray-300 text-sm sm:text-base">Duration: {{ liveClass.duration }} minutes</p>
+                        <a [href]="liveClass.meetingLink" target="_blank"
+                            class="mt-2 inline-block bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded hover:bg-blue-600 text-xs sm:text-sm">
+                            Join Class
+                        </a>
+                    </div>
+                    <p *ngIf="!course.liveClasses?.length" class="text-gray-400 text-sm sm:text-base">No live classes scheduled yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <ng-template #loading>
+            <div class="flex items-center justify-center h-full">
+                <div class="text-white text-base sm:text-xl">Loading course details...</div>
+            </div>
+        </ng-template>
+    </section>
+</div>

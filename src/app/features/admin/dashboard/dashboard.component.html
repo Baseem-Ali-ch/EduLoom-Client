@@ -1,0 +1,49 @@
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- Home Content -->
+  <section class="flex-1 h-screen overflow-y-auto bg-slate-900">
+    <!-- Banner -->
+    <div class="container px-6 py-10 mx-auto">
+      <h1 class="flex items-center space-x-4 text-2xl font-semibold capitalize lg:text-3xl text-white cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-house"
+          viewBox="0 0 16 16">
+          <path
+            d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+        </svg>
+        <span>Dashboard</span>
+      </h1>
+    </div>
+    <!-- Banner End -->
+
+    <!-- Stats Cards -->
+    <div class="container px-6 py-4 mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-800 p-6 rounded-lg text-center">
+        <h3 class="text-xl font-semibold text-white">Total Students</h3>
+        <p class="text-3xl text-blue-400">{{ totalStudents }}</p>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-lg text-center">
+        <h3 class="text-xl font-semibold text-white">Total Instructors</h3>
+        <p class="text-3xl text-blue-400">{{ totalInstructors }}</p>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-lg text-center">
+        <h3 class="text-xl font-semibold text-white">Total Courses</h3>
+        <p class="text-3xl text-blue-400">{{ totalCourses }}</p>
+      </div>
+    </div>
+
+    <!-- Top Courses Section -->
+    <div class="container px-6 py-4 mx-auto">
+      <h2 class="text-2xl font-semibold text-white mb-4">Top Courses</h2>
+      <div class="bg-gray-800 p-4 rounded-lg" style="height: 400px;">
+        <canvas 
+          baseChart 
+          [data]="courseEnrollmentChartData" 
+          [options]="courseEnrollmentChartOptions"
+          [type]="courseEnrollmentChartType">
+        </canvas>
+      </div>
+    </div>
+  </section>
+</div>

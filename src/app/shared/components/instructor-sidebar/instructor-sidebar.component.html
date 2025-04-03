@@ -1,0 +1,66 @@
+<button class="md:hidden absolute top-3 sm:top-4 left-3 sm:left-4 bg-gray-800 text-white p-2 rounded-md z-50"
+    (click)="isSidebarOpen = !isSidebarOpen">
+    ☰
+</button>
+<aside [ngClass]="{'hidden': !isSidebarOpen, 'block': isSidebarOpen, 'md:flex': true, 'md:relative': true}"
+    class="flex flex-col w-full sm:w-64 h-screen px-3 sm:px-4 py-6 sm:py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l bg-gray-900 border-gray-700 fixed md:static z-40">
+   
+    <div *ngIf="instructor" class="flex flex-col items-center mt-4 sm:mt-6 -mx-2">
+        <img class="object-cover w-20 h-20 sm:w-24 sm:h-24 mx-2 rounded-full"
+            [src]="getImageUrl(profilePhoto) || 'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?t=st=1738060979~exp=1738064579~hmac=dcfa5142a7195b0afef76e8e5eb79a93d6e2a525a32232427e57b69530685dbe&w=740'"
+            alt="avatar">
+        <h4 class="mx-2 mt-2 text-sm sm:text-base font-medium text-gray-200">{{ instructor?.userName || 'Guest' }}</h4>
+        <p class="mx-2 mt-1 text-xs sm:text-sm font-medium text-gray-400">{{ instructor?.email || 'No email provided' }}</p>
+    </div>
+
+    <div class="flex flex-col justify-between flex-1 mt-4 sm:mt-6">
+        <nav>
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/dashboard"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Dashboard</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/courses"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Courses</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/students"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Students</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/announcement"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Announcements</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/revenue"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Revenue</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/notification"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Notification</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                routerLink="/instructor/profile"
+                [routerLinkActive]="'bg-gray-800 text-gray-200 dark:bg-gray-800 dark:text-gray-200'">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Profile</span>
+            </a>
+
+            <a class="cursor-pointer flex items-center px-3 sm:px-4 py-2 mt-3 sm:mt-5 text-gray-400 transition-colors duration-300 transform rounded-lg hover:bg-gray-800 hover:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                (click)="onLogout()">
+                <span class="mx-2 sm:mx-4 text-xs sm:text-sm font-medium">Logout</span>
+            </a>
+        </nav>
+    </div>
+</aside>

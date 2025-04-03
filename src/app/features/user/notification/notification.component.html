@@ -1,0 +1,83 @@
+<div class="flex h-screen">
+    <!-- Sidebar -->
+    <app-sidebar></app-sidebar>
+
+    <!-- Home Content -->
+    <section class="flex-1 h-screen overflow-y-auto bg-slate-900">
+        <div class="container px-6 py-10 mx-auto">
+            <h1 class="flex space-x-4 text-2xl font-semibold capitalize lg:text-3xl text-white cursor-default">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-bell"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
+                </svg>
+                <span>Notifications</span>
+            </h1>
+
+            <div *ngFor="let notification of notifications" class="space-y-4 mt-6">
+                <!-- Notification Card -->
+                <div class="p-5 bg-gray-800 rounded-lg shadow cursor-pointer" (click)="openModal(notification)">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-white">
+                            {{ notification.title }}
+                        </h2>
+                        <span [ngClass]="{
+                                'bg-yellow-100 text-yellow-900': notification.status === 'pending',
+                                'bg-green-100 text-green-900': notification.status === 'accepted',
+                                'bg-red-100 text-red-900': notification.status === 'rejected'
+                            }" class="px-3 py-1 text-sm font-semibold rounded-lg">
+                            {{ notification.status }}
+                        </span>
+                    </div>
+                    <p class="text-gray-300 mt-2">{{ notification.message }}</p>
+                    <span class="text-sm text-gray-400 block mt-2">
+                        Date : {{ notification.createdAt | date:'yyyy-MM-dd' }}
+                    </span>
+                </div>
+            </div>
+            <div *ngIf="announcements && announcements.length  > 0; else falseMess">
+                <div *ngFor="let announcement of announcements"
+                    class="p-5 bg-gray-800 rounded-lg shadow space-y-4 mt-16">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-white cursor-pointer">
+                            {{ announcement.title }}
+                        </h2>
+                        <!-- <div class="space-x-4">
+                            <button (click)="editAnnouncement(announcement)"
+                                class="transition-colors duration-200 hover:text-yellow-500 text-gray-300 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                            </button>
+                            <button (click)="deleteAnnouncement(announcement._id)"
+                                class="transition-colors duration-200 hover:text-red-500 text-gray-300 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div> -->
+                    </div>
+                    <p class="text-gray-300 mt-2">{{ announcement.description }}</p>
+                    <!-- <p class="text-gray-300 mt-2">By: {{ announcement.instructorId }}</p> -->
+                    <!-- <p class="text-gray-300 mt-2">
+                    Created: {{ announcement.createdAt | date }}
+                </p>
+                <p class="text-gray-300 mt-2">
+                    Last Updated: {{ announcement.updatedAt | date }}
+                </p> -->
+                </div>
+            </div>
+            <ng-template #falseMess>
+                <h2 class="text-lg font-semibold text-white mt-16 mx-3">
+                    No Notifications
+                </h2>
+            </ng-template>
+        </div>
+    </section>
+</div>
+
+<app-notification-modal [isOpen]="isModalOpen" [data]="notificationData"
+    (close)="closeModal()"></app-notification-modal>

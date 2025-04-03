@@ -1,0 +1,130 @@
+<div *ngIf="isInstructorOpen" class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:px-6">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+        <!-- Modal container -->
+        <div
+            class="relative inline-block w-full max-w-lg sm:max-w-2xl lg:max-w-4xl px-4 sm:px-6 pt-4 sm:pt-6 pb-6 overflow-hidden text-left align-middle transition-all transform rounded-lg shadow-xl bg-gray-900">
+            <h3 class="text-base sm:text-lg font-medium leading-6 capitalize text-white text-center">
+                Become An Instructor
+            </h3>
+
+            <form class="mt-4 w-full mx-auto" (ngSubmit)="onSubmit()" [formGroup]="instructorDetailsForm">
+                <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                    <div class="w-full sm:w-1/2 space-y-3 sm:space-y-4">
+                        <!-- Name -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Name</label>
+                            <input formControlName="userName" type="text" name="userName"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                            <p *ngIf="instructorDetailsForm.get('userName')?.hasError('required') && instructorDetailsForm.get('userName')?.touched"
+                                class="mt-1 text-red-500 text-xs">Name is required</p>
+                            <p *ngIf="instructorDetailsForm.get('userName')?.hasError('minlength') && instructorDetailsForm.get('userName')?.touched"
+                                class="mt-1 text-red-500 text-xs">Name must be at least 5 characters long</p>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Phone Number</label>
+                            <input formControlName="phone" type="tel" name="phone"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                            <p *ngIf="instructorDetailsForm.get('phone')?.hasError('required') && instructorDetailsForm.get('phone')?.touched"
+                                class="mt-1 text-red-500 text-xs">Phone number is required</p>
+                            <p *ngIf="(instructorDetailsForm.get('phone')?.hasError('pattern') || instructorDetailsForm.get('phone')?.hasError('maxlength')) && instructorDetailsForm.get('phone')?.touched"
+                                class="mt-1 text-red-500 text-xs">Phone number must be 10 digits</p>
+                        </div>
+
+                        <!-- Country -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Country</label>
+                            <select formControlName="country" (ngModelChange)="onCountryChange($event)"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                <option value="" disabled>Select a country</option>
+                                <option *ngFor="let country of countries" [value]="country.isoCode">
+                                    {{ country.name }}
+                                </option>
+                            </select>
+                            <p *ngIf="instructorDetailsForm.get('country')?.hasError('required') && instructorDetailsForm.get('country')?.touched"
+                                class="mt-1 text-red-500 text-xs">Country is required</p>
+                        </div>
+
+                        <!-- State -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">State</label>
+                            <select formControlName="state"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                <option value="" disabled>Select a state</option>
+                                <option *ngFor="let state of states" [value]="state.isoCode">
+                                    {{ state.name }}
+                                </option>
+                            </select>
+                            <p *ngIf="instructorDetailsForm.get('state')?.hasError('required') && instructorDetailsForm.get('state')?.touched"
+                                class="mt-1 text-red-500 text-xs">State is required</p>
+                        </div>
+                    </div>
+
+                    <div class="w-full sm:w-1/2 space-y-3 sm:space-y-4">
+                        <!-- Qualification -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Qualification</label>
+                            <input formControlName="qualification" type="text" name="qualification"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                            <p *ngIf="instructorDetailsForm.get('qualification')?.hasError('required') && instructorDetailsForm.get('qualification')?.touched"
+                                class="mt-1 text-red-500 text-xs">Qualification is required</p>
+                        </div>
+
+                        <!-- Work Experience -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Work Experience (in years)</label>
+                            <select formControlName="workExperience"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                <option value="" disabled>Select experience</option>
+                                <option *ngFor="let years of experienceOptions" [value]="years">
+                                    {{ years }}
+                                </option>
+                            </select>
+                            <p *ngIf="instructorDetailsForm.get('workExperience')?.hasError('required') && instructorDetailsForm.get('workExperience')?.touched"
+                                class="mt-1 text-red-500 text-xs">Work experience is required</p>
+                        </div>
+
+                        <!-- Last Working Place -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Last Working Place</label>
+                            <input formControlName="lastWorkingPlace" type="text" name="lastWorkingPlace"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                            <p *ngIf="instructorDetailsForm.get('lastWorkingPlace')?.hasError('required') && instructorDetailsForm.get('lastWorkingPlace')?.touched"
+                                class="mt-1 text-red-500 text-xs">Last working place is required</p>
+                        </div>
+
+                        <!-- Specialization -->
+                        <div>
+                            <label class="text-xs sm:text-sm text-gray-200">Specialization</label>
+                            <select formControlName="specialization"
+                                class="block w-full px-3 py-2 mt-1 text-xs sm:text-sm text-gray-700 border border-gray-200 rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                <option value="" disabled selected>Select specialization</option>
+                                <option *ngFor="let specialization of specializationOptions" [value]="specialization">
+                                    {{ specialization }}
+                                </option>
+                            </select>
+                            <p *ngIf="instructorDetailsForm.get('specialization')?.hasError('required') && instructorDetailsForm.get('specialization')?.touched"
+                                class="mt-1 text-red-500 text-xs">Specialization is required</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                    <button (click)="onClose()" type="button"
+                        class="px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium tracking-wide text-gray-700 capitalize transition-colors duration-300 transform border border-gray-200 rounded-md dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-40">
+                        Cancel
+                    </button>
+                    <button type="submit" [disabled]="!instructorDetailsForm.valid"
+                        class="px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Send Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="flex flex-col min-h-screen md:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-admin-sidebar class="w-full md:w-64 flex-shrink-0"></app-admin-sidebar>
+    </div>
+
+    <!-- Main Content -->
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container mx-auto">
+            <h1
+                class="flex items-center space-x-3 sm:space-x-4 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default mb-6 sm:mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                    class="bi bi-person sm:w-8 sm:h-8 lg:w-10 lg:h-10" viewBox="0 0 16 16">
+                    <path
+                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                </svg>
+                <span>User Management</span>
+            </h1>
+
+            <!-- Filter and Search Options -->
+            <div
+                class="flex flex-col sm:flex-row justify-start sm:justify-end items-start sm:items-center gap-3 sm:gap-x-4 mt-2 sm:mt-4">
+                <!-- Select Dropdown for Filtering Users by Status -->
+                <select [(ngModel)]="selectedStatus" (change)="filterUsers()"
+                    class="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-lg bg-gray-900 text-gray-300 border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+                <!-- Search Input -->
+                <div class="relative flex items-center w-full sm:w-auto">
+                    <span class="absolute left-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </span>
+                    <input type="text" [(ngModel)]="searchTerm" (input)="filterUsers()" placeholder="Search users"
+                        class="block w-full sm:w-64 md:w-80 py-1.5 sm:py-2 pr-4 sm:pr-5 pl-9 sm:pl-10 text-xs sm:text-sm text-gray-300 border border-gray-600 rounded-lg bg-gray-900 placeholder-gray-400/70 focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Container with Isolated Horizontal Scroll -->
+        <div class="flex flex-col mt-4 sm:mt-6">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                    <div class="overflow-hidden border border-gray-700 rounded-lg"> <!-- Removed md: -->
+                        <app-table [data]="filteredUsers" [columns]="tableColumns" [currentPage]="currentPage"
+                            [totalPages]="totalPages" [limit]="limit" (pageChange)="onPageChange($event)"
+                            (actionClicked)="onActionClicked($event)">
+                        </app-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

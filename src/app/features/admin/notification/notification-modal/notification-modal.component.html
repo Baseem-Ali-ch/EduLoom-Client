@@ -1,0 +1,52 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+    <!-- Modal Content -->
+    <div class=" dark:bg-gray-900 rounded-lg shadow-xl sm:w-full sm:max-w-md p-6 relative">
+  
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+          {{ data?.title }}
+        </h3>
+        <button class="text-gray-400 hover:text-white" (click)="close.emit()">
+          ✖
+        </button>
+      </div>
+  
+      <!-- Modal Body -->
+      <div class="mt-4">
+        <p class="text-gray-600 dark:text-gray-300">
+          {{ data?.description }}
+        </p>
+        <div class="mt-2 flex justify-between">
+          <span class="text-sm text-gray-400">
+            Date: {{ data?.createdAt | date:'yyyy-MM-dd' }}
+          </span>
+          <span 
+            [ngClass]="{
+              'bg-yellow-100 text-yellow-900': data?.status === 'pending',
+              'bg-green-100 text-green-900': data?.status === 'accepted',
+              'bg-red-100 text-red-900': data?.status === 'rejected'
+            }" 
+            class="px-3 py-1 text-sm font-semibold rounded-lg">
+            {{ data?.status }}
+          </span>
+        </div>
+        <!-- Buttons for Accept & Reject -->
+        <div class="mt-4 flex space-x-2">
+          <button *ngIf="data.status === 'pending'" 
+              (click)="updateStatus(data, 'accepted')" 
+              class="px-2 py-1 text-sm bg-green-500 text-white rounded-sm hover:bg-green-600">
+              Accept
+          </button>
+
+          <button *ngIf="data.status === 'pending'" 
+              (click)="updateStatus(data, 'rejected')" 
+              class="px-2 py-1 text-sm bg-red-500 text-white rounded-sm hover:bg-red-600">
+              Reject
+          </button>
+      </div>
+      </div>
+      
+  
+    </div>
+  </div>

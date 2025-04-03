@@ -1,0 +1,90 @@
+<div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-700">
+        <thead class="bg-gray-800">
+            <tr>
+                <th *ngFor="let column of columns"
+                    class="py-2 sm:py-3.5 px-2 sm:px-4 text-xs sm:text-sm md:text-md font-normal text-left rtl:text-right text-gray-400 whitespace-nowrap">
+                    {{ column.label }}
+                </th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700 bg-gray-900">
+            <tr *ngFor="let item of paginatedData">
+                <td *ngFor="let column of columns"
+                    class="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-md font-normal whitespace-nowrap">
+                    <ng-container *ngIf="!column.isAction; else actionTemplate">
+                        <!-- Phone column customization -->
+                        <div *ngIf="column.key === 'phone' && !item[column.key]; else normalText">
+                            <h2 class="font-medium text-white">N/A</h2>
+                        </div>
+
+                        <!-- Status column customization -->
+                        <div *ngIf="column.key === 'isActive'"
+                            class="inline px-2 sm:px-3 py-1 text-xs sm:text-sm font-normal rounded-full" [ngClass]="{
+                                'text-emerald-500 bg-gray-800': item[column.key],
+                                'text-red-500 bg-red-100/10': !item[column.key]
+                            }">
+                            {{ item[column.key] ? 'Active' : 'Inactive' }}
+                        </div>
+
+                        <!-- Default rendering for other columns -->
+                        <ng-template #normalText>
+                            <h2 *ngIf="column.key !== 'isActive'" class="font-medium text-white">{{ item[column.key] }}
+                            </h2>
+                        </ng-template>
+                    </ng-container>
+
+                    <!-- Action buttons -->
+                    <ng-template #actionTemplate>
+                        <div class="flex items-center gap-x-2 sm:gap-x-4 md:gap-x-6">
+                            <button *ngIf="item.isActive; else inactiveTemplate"
+                                (click)="onActionClick(item, 'suspend')"
+                                class="px-2 py-1 text-xs sm:text-sm bg-red-500 text-white rounded-md hover:bg-red-600">
+                                Suspend
+                            </button>
+                            <ng-template #inactiveTemplate>
+                                <button (click)="onActionClick(item, 'activate')"
+                                    class="px-2 py-1 text-xs sm:text-sm bg-green-500 text-white rounded-md hover:bg-green-600">
+                                    Activate
+                                </button>
+                            </ng-template>
+                            <button (click)="onActionClick(item, 'edit')"
+                                class="transition-colors duration-200 hover:text-yellow-500 text-gray-300 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                            </button>
+                        </div>
+                    </ng-template>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination mt-4 flex justify-center items-center space-x-2 flex-wrap" *ngIf="data.length > limit">
+    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+        class="px-2 sm:px-3 py-1 sm:py-2 bg-gray-700 text-white rounded-md hover:bg-blue-400 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors duration-200 text-xs sm:text-sm">
+        Previous
+    </button>
+
+    <!-- Page Numbers -->
+    <ng-container *ngFor="let page of getPageNumbers(); let i = index">
+        <!-- Ellipsis for skipped pages -->
+        <span *ngIf="shouldShowEllipsis(i)" class="text-gray-300 text-xs sm:text-sm">...</span>
+        <!-- Page Number Button -->
+        <button *ngIf="!shouldShowEllipsis(i)" (click)="goToPage(page)"
+            [ngClass]="{'bg-blue-500': page === currentPage, 'bg-gray-700': page !== currentPage}"
+            class="px-2 sm:px-3 py-1 sm:py-2 text-white rounded-md hover:bg-blue-400 transition-colors duration-200 text-xs sm:text-sm">
+            {{ page }}
+        </button>
+    </ng-container>
+
+    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+        class="px-2 sm:px-3 py-1 sm:py-2 bg-gray-700 text-white rounded-md hover:bg-blue-400 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors duration-200 text-xs sm:text-sm">
+        Next
+    </button>
+</div>

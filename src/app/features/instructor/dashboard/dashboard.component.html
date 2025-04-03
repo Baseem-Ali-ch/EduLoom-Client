@@ -1,0 +1,31 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+  <!-- Sidebar -->
+  <app-instructor-sidebar class="w-full lg:w-64 flex-shrink-0"></app-instructor-sidebar>
+
+  <!-- Home Content -->
+  <section class="flex-1 overflow-y-auto bg-slate-900">
+    <!-- Banner -->
+    <div class="container px-4 sm:px-6 py-6 sm:py-10 mx-auto">
+      <h1 class="flex items-center space-x-3 text-xl sm:text-2xl lg:text-3xl font-semibold capitalize text-white cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-house sm:w-9 sm:h-9 lg:w-10 lg:h-10"
+          viewBox="0 0 16 16">
+          <path
+            d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 01-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+        </svg>
+        <span>Dashboard</span>
+      </h1>
+    </div>
+
+    <!-- Course Enrollment Statistics -->
+    <div class="container px-4 sm:px-6 py-4 sm:py-5 mx-auto">
+      <div class="p-4 sm:p-6 bg-gray-900 text-white">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Course Enrollment Statistics</h2>
+        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg w-full" style="height: 300px; max-height: 400px;">
+          <canvas baseChart [data]="courseEnrollmentChartData" [options]="courseEnrollmentChartOptions"
+            [type]="courseEnrollmentChartType" class="w-full h-full">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

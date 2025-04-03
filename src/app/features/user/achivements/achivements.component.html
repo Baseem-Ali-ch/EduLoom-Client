@@ -1,0 +1,47 @@
+<div class="flex flex-col min-h-screen lg:flex-row">
+    <!-- Sidebar -->
+    <div class="fixed h-full lg:w-64 flex-shrink-0 z-10">
+        <app-sidebar class="h-full"></app-sidebar>
+    </div>
+    <!-- Home Content -->
+    <section class="flex-1 overflow-y-auto ml-0 lg:ml-64 p-4 sm:p-6 bg-slate-900">
+        <div class="container px-4 py-6 mx-auto sm:px-6 sm:py-8 lg:py-10">
+            <h1 class="flex items-center space-x-3 text-xl font-semibold capitalize sm:text-2xl lg:text-3xl text-white cursor-default">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-bell sm:w-9 sm:h-9 lg:w-10 lg:h-10" viewBox="0 0 16 16">
+                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
+                </svg>
+                <span>Achievements</span>
+            </h1>
+
+            <div class="grid grid-cols-1 gap-4 mt-8 sm:grid-cols-2 sm:gap-6 sm:mt-12 lg:grid-cols-3 lg:mt-20">
+                <div *ngFor="let achievement of achievements"
+                    class="relative p-4 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl sm:p-6"
+                    [ngClass]="{
+                        'bg-gradient-to-br from-green-700 to-green-900': achievement.unlocked,
+                        'bg-gradient-to-br from-gray-700 to-gray-900': !achievement.unlocked
+                    }">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <!-- Trophy Icon (Unlocked) -->
+                        <svg *ngIf="achievement.unlocked" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-unlock sm:w-10 sm:h-10" viewBox="0 0 16 16">
+                            <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2M3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z" />
+                        </svg>
+
+                        <!-- Locked Trophy Icon -->
+                        <svg *ngIf="!achievement.unlocked" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-lock sm:w-10 sm:h-10" viewBox="0 0 16 16">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1" />
+                        </svg>
+
+                        <div class="flex-1">
+                            <h3 class="text-base font-semibold text-white sm:text-lg">{{ achievement.title }}</h3>
+                            <p class="text-gray-300 text-sm sm:text-base">{{ achievement.description }}</p>
+                            <p *ngIf="achievement.unlocked" class="text-xs text-green-300 mt-1 sm:text-sm">
+                                Unlocked on {{ achievement.unlockedDate | date: 'medium' }}
+                            </p>
+                            <p *ngIf="!achievement.unlocked" class="text-xs text-gray-400 mt-1 sm:text-sm">Locked</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

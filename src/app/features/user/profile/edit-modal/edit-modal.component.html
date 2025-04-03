@@ -1,0 +1,49 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-10 flex items-center justify-center p-4 bg-gray-500 bg-opacity-75">
+  <div class="relative w-full max-w-sm mx-auto p-4 md:p-6 bg-gray-900 rounded-lg shadow-xl">
+    <h3 class="text-lg md:text-xl font-medium leading-6 capitalize text-white">
+      Edit Profile
+    </h3>
+
+    <form class="mt-4" (ngSubmit)="onSubmit()" [formGroup]="updateProfileForm">
+      <div class="mt-3">
+        <label class="text-sm md:text-base text-gray-200">Name</label>
+        <input formControlName="userName"
+          type="text"
+          name="userName"
+          class="block w-full px-3 md:px-4 py-2 md:py-3 mt-1 text-sm md:text-base border rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 border-gray-600 bg-gray-900 text-gray-300"
+        >
+        <p *ngIf="updateProfileForm.get('userName')?.hasError('minlength') && updateProfileForm.get('userName')?.touched"
+          class="text-red-500 text-xs md:text-sm mt-1">Username must be at least 5 characters long</p>
+      </div>
+
+      <div class="mt-3">
+        <label class="text-sm md:text-base text-gray-200">Phone Number</label>
+        <input formControlName="phone"
+          type="tel"
+          name="phone"
+          class="block w-full px-3 md:px-4 py-2 md:py-3 mt-1 text-sm md:text-base border rounded-md focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 border-gray-600 bg-gray-900 text-gray-300"
+        >
+        <p *ngIf="updateProfileForm.get('phone')?.hasError('minlength') && updateProfileForm.get('phone')?.touched"
+          class="text-red-500 text-xs md:text-sm mt-1">Phone number must be exactly 10 digits long</p>
+        <p *ngIf="updateProfileForm.get('phone')?.hasError('maxlength') && updateProfileForm.get('phone')?.touched"
+          class="text-red-500 text-xs md:text-sm mt-1">Phone number cannot exceed 10 digits</p>
+      </div>
+
+      <div class="mt-4 flex flex-col sm:flex-row justify-between gap-2">
+        <button (click)="onClose()"
+          type="button"
+          class="w-full sm:w-1/2 px-4 py-2 text-sm md:text-base font-medium tracking-wide capitalize transition-colors duration-300 transform border rounded-md text-gray-200 border-gray-700 hover:bg-gray-800 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-40"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="w-full sm:w-1/2 px-4 py-2 text-sm md:text-base font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
+        >
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
